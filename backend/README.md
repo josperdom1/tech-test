@@ -62,6 +62,16 @@ src/
         └── entities/     # Type entity
 ```
 
+## API Documentation
+
+The API is documented using Swagger UI, which provides:
+- Interactive API documentation
+- Request/response schemas
+- Try-it-out functionality
+- OpenAPI 3.0 specification
+
+Access the Swagger UI at: `http://localhost:3000/api-docs`
+
 ## Database Structure
 
 ### Schema
@@ -92,22 +102,6 @@ CREATE INDEX idx_duties_type_id ON duties(type_id);
 ### Initial Data
 
 The database is initialized with sample data:
-
-```sql
--- Sample types
-INSERT INTO types (id, name) VALUES
-    ('11111111-1111-1111-1111-111111111111', 'Work'),
-    ('22222222-2222-2222-2222-222222222222', 'Personal'),
-    ('33333333-3333-3333-3333-333333333333', 'Shopping'),
-    ('44444444-4444-4444-4444-444444444444', 'Health');
-
--- Sample duties
-INSERT INTO duties (id, name, completed, created_at, updated_at, type_id) VALUES
-    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Complete project documentation', false, NOW(), NOW(), '11111111-1111-1111-1111-111111111111'),
-    ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Go to the gym', true, NOW(), NOW(), '44444444-4444-4444-4444-444444444444'),
-    ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'Buy groceries', false, NOW(), NOW(), '33333333-3333-3333-3333-333333333333'),
-    ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'Call family', false, NOW(), NOW(), '22222222-2222-2222-2222-222222222222');
-```
 
 ### Database Construction
 
@@ -248,6 +242,11 @@ TODO
    - Logging system
    - Metrics collection
    - Health checks
+
+5. **Enforced screaming architecture and single responsibility priniciple**
+   - Since the feature is really simple, I do not want to make overengineering and make it hard to correct.
+   - For production purpose I would separate the ruotes in different files.
+   - For maintaibility I would add DTOs for all kind of requests and responses.
 
 ## License
 

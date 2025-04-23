@@ -13,9 +13,9 @@ export class PostgresDutyRepository implements DutyRepository {
       await client.query('BEGIN');
       
       await client.query(
-        `INSERT INTO duties (id, name, completed, created_at, updated_at, type_id)
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [duty.id, duty.name, duty.completed, duty.createdAt, duty.updatedAt, duty.type.id]
+        `INSERT INTO duties (id, name, description, completed, created_at, updated_at, type_id)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [duty.id, duty.name, duty.description, duty.completed, duty.createdAt, duty.updatedAt, duty.type.id]
       );
 
       await client.query('COMMIT');
@@ -45,6 +45,7 @@ export class PostgresDutyRepository implements DutyRepository {
       return new Duty(
         row.id,
         row.name,
+        row.description,
         row.completed,
         row.created_at,
         row.updated_at,
@@ -66,6 +67,7 @@ export class PostgresDutyRepository implements DutyRepository {
       return result.rows.map(row => new Duty(
         row.id,
         row.name,
+        row.description,
         row.completed,
         row.created_at,
         row.updated_at,
@@ -76,13 +78,48 @@ export class PostgresDutyRepository implements DutyRepository {
     }
   }
 
+  async findAllPaginated(page: number, limit: number): Promise<{ duties: Duty[]; total: number }> {
+    try {
+      const offset = (page - 1) * limit;
+      
+      const [dutiesResult, totalResult] = await Promise.all([
+        this.pool.query(
+          `SELECT d.*, t.name as type_name 
+           FROM duties d
+           JOIN types t ON d.type_id = t.id
+           ORDER BY d.created_at DESC
+           LIMIT $1 OFFSET $2`,
+          [limit, offset]
+        ),
+        this.pool.query('SELECT COUNT(*) FROM duties')
+      ]);
+
+      const duties = dutiesResult.rows.map(row => new Duty(
+        row.id,
+        row.name,
+        row.description,
+        row.completed,
+        row.created_at,
+        row.updated_at,
+        new Type(row.type_id, row.type_name)
+      ));
+
+      return {
+        duties,
+        total: parseInt(totalResult.rows[0].count)
+      };
+    } catch (error) {
+      throw new DatabaseError('Error finding paginated duties', error);
+    }
+  }
+
   async update(duty: Duty): Promise<void> {
     try {
       const result = await this.pool.query(
         `UPDATE duties 
-         SET name = $1, completed = $2, updated_at = $3
-         WHERE id = $4`,
-        [duty.name, duty.completed, duty.updatedAt, duty.id]
+         SET name = $1, description = $2, completed = $3, updated_at = $4
+         WHERE id = $5`,
+        [duty.name, duty.description, duty.completed, duty.updatedAt, duty.id]
       );
 
       if (result.rowCount === 0) {

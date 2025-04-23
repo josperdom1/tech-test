@@ -43,6 +43,10 @@ const options: swaggerJsdoc.Options = {
               type: 'string',
               description: 'The duty name',
             },
+            description: {
+              type: 'string',
+              description: 'The duty description',
+            },
             completed: {
               type: 'boolean',
               description: 'Whether the duty is completed',
@@ -61,7 +65,7 @@ const options: swaggerJsdoc.Options = {
               $ref: '#/components/schemas/Type',
             },
           },
-          required: ['id', 'name', 'completed', 'createdAt', 'updatedAt', 'type'],
+          required: ['id', 'name', 'description', 'completed', 'createdAt', 'updatedAt', 'type'],
         },
       },
     },
