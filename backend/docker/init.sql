@@ -13,6 +13,7 @@ CREATE TABLE types (
 CREATE TABLE duties (
     id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
     completed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP NOT NULL,
@@ -30,8 +31,8 @@ INSERT INTO types (id, name) VALUES
     ('44444444-4444-4444-4444-444444444444', 'Health');
 
 -- Insert sample duties
-INSERT INTO duties (id, name, completed, created_at, updated_at, type_id) VALUES
-    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Complete project documentation', false, NOW(), NOW(), '11111111-1111-1111-1111-111111111111'),
-    ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Go to the gym', true, NOW(), NOW(), '44444444-4444-4444-4444-444444444444'),
-    ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'Buy groceries', false, NOW(), NOW(), '33333333-3333-3333-3333-333333333333'),
-    ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'Call family', false, NOW(), NOW(), '22222222-2222-2222-2222-222222222222'); 
+INSERT INTO duties (id, name, description, completed, created_at, updated_at, type_id) VALUES
+    ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'Complete project documentation', 'Write comprehensive documentation for the project including API endpoints and database schema', false, NOW(), NOW(), '11111111-1111-1111-1111-111111111111'),
+    ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'Go to the gym', 'Complete a 1-hour workout session focusing on strength training', true, NOW(), NOW(), '44444444-4444-4444-4444-444444444444'),
+    ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'Buy groceries', 'Purchase weekly groceries including fruits, vegetables, and household items', false, NOW(), NOW(), '33333333-3333-3333-3333-333333333333'),
+    ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'Call family', 'Schedule a video call with family members to catch up', false, NOW(), NOW(), '22222222-2222-2222-2222-222222222222'); 

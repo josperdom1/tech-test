@@ -8,8 +8,11 @@ RUN npm install
 
 COPY . .
 
-RUN npm run build
+# Only build in production
+ARG NODE_ENV=development
+RUN if [ "$NODE_ENV" = "production" ]; then npm run build; fi
 
 EXPOSE 3000
 
-CMD ["npm", "start"] 
+# Use nodemon in development, regular node in production
+CMD if [ "$NODE_ENV" = "production" ]; then npm start; else npm run dev; fi 
