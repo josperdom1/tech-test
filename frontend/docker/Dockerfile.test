@@ -1,0 +1,22 @@
+FROM node:18
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy source code
+COPY . .
+
+# Set environment variables for testing
+ENV CI=true
+ENV NODE_ENV=test
+
+# Expose port 3001
+EXPOSE 3001
+
+# The command will be overridden by docker-compose
+CMD ["npm", "test:coverage"]

@@ -9,7 +9,8 @@ export class Duty {
     public completed: boolean,
     public readonly createdAt: Date,
     public updatedAt: Date,
-    public readonly type: Type
+    public readonly type: Type,
+    public deleted: boolean = false
   ) {}
 
   static create(name: string, description: string, type: Type): Duty {
@@ -20,7 +21,8 @@ export class Duty {
       false,
       new Date(),
       new Date(),
-      type
+      type,
+      false
     );
   }
 
@@ -31,6 +33,11 @@ export class Duty {
 
   uncomplete(): void {
     this.completed = false;
+    this.updatedAt = new Date();
+  }
+
+  markAsDeleted(): void {
+    this.deleted = true;
     this.updatedAt = new Date();
   }
 } 

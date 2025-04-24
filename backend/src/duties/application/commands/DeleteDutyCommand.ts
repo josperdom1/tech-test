@@ -15,9 +15,13 @@ export class DeleteDutyCommand {
       throw new NotFoundError(`Duty with id ${id} not found`);
     }
 
-    await this.dutyRepository.delete(id);
+    // Mark the duty as deleted
+    existingDuty.markAsDeleted();
     
-    // Emit event
+    // Save the updated duty
+    await this.dutyRepository.update(existingDuty);
+    
+    // Emit event for logging
     await this.dutyEventHandler.handleDutyDeleted(new DutyDeletedEvent(id));
   }
 } 

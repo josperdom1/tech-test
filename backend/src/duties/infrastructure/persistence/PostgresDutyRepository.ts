@@ -33,7 +33,7 @@ export class PostgresDutyRepository implements DutyRepository {
         `SELECT d.*, t.name as type_name 
          FROM duties d
          JOIN types t ON d.type_id = t.id
-         WHERE d.id = $1`,
+         WHERE d.id = $1 AND d.deleted = false`,
         [id]
       );
 
@@ -49,7 +49,8 @@ export class PostgresDutyRepository implements DutyRepository {
         row.completed,
         row.created_at,
         row.updated_at,
-        new Type(row.type_id, row.type_name)
+        new Type(row.type_id, row.type_name),
+        row.deleted
       );
     } catch (error) {
       throw new DatabaseError('Error finding duty', error);
@@ -61,7 +62,9 @@ export class PostgresDutyRepository implements DutyRepository {
       const result = await this.pool.query(
         `SELECT d.*, t.name as type_name 
          FROM duties d
-         JOIN types t ON d.type_id = t.id`
+         JOIN types t ON d.type_id = t.id
+         WHERE d.deleted = false
+         ORDER BY d.created_at DESC`
       );
 
       return result.rows.map(row => new Duty(
@@ -71,7 +74,8 @@ export class PostgresDutyRepository implements DutyRepository {
         row.completed,
         row.created_at,
         row.updated_at,
-        new Type(row.type_id, row.type_name)
+        new Type(row.type_id, row.type_name),
+        row.deleted
       ));
     } catch (error) {
       throw new DatabaseError('Error finding duties', error);
@@ -87,11 +91,12 @@ export class PostgresDutyRepository implements DutyRepository {
           `SELECT d.*, t.name as type_name 
            FROM duties d
            JOIN types t ON d.type_id = t.id
+           WHERE d.deleted = false
            ORDER BY d.created_at DESC
            LIMIT $1 OFFSET $2`,
           [limit, offset]
         ),
-        this.pool.query('SELECT COUNT(*) FROM duties')
+        this.pool.query('SELECT COUNT(*) FROM duties WHERE deleted = false')
       ]);
 
       const duties = dutiesResult.rows.map(row => new Duty(
@@ -101,7 +106,8 @@ export class PostgresDutyRepository implements DutyRepository {
         row.completed,
         row.created_at,
         row.updated_at,
-        new Type(row.type_id, row.type_name)
+        new Type(row.type_id, row.type_name),
+        row.deleted
       ));
 
       return {
@@ -117,9 +123,9 @@ export class PostgresDutyRepository implements DutyRepository {
     try {
       const result = await this.pool.query(
         `UPDATE duties 
-         SET name = $1, description = $2, completed = $3, updated_at = $4
-         WHERE id = $5`,
-        [duty.name, duty.description, duty.completed, duty.updatedAt, duty.id]
+         SET name = $1, description = $2, completed = $3, updated_at = $4, deleted = $5
+         WHERE id = $6`,
+        [duty.name, duty.description, duty.completed, duty.updatedAt, duty.deleted, duty.id]
       );
 
       if (result.rowCount === 0) {
@@ -133,7 +139,9 @@ export class PostgresDutyRepository implements DutyRepository {
   async delete(id: string): Promise<void> {
     try {
       const result = await this.pool.query(
-        'DELETE FROM duties WHERE id = $1',
+        `UPDATE duties 
+         SET deleted = true, updated_at = NOW()
+         WHERE id = $1`,
         [id]
       );
 

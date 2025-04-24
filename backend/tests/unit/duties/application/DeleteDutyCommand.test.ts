@@ -38,11 +38,14 @@ describe('DeleteDutyCommand', () => {
     );
   });
 
-  it('should delete a duty successfully', async () => {
+  it('should mark a duty as deleted successfully', async () => {
     await deleteDutyCommand.execute(mockDuty.id);
 
     expect(mockDutyRepository.findById).toHaveBeenCalledWith(mockDuty.id);
-    expect(mockDutyRepository.delete).toHaveBeenCalledWith(mockDuty.id);
+    expect(mockDutyRepository.update).toHaveBeenCalledWith(expect.objectContaining({
+      id: mockDuty.id,
+      deleted: true
+    }));
     expect(mockDutyEventHandler.handleDutyDeleted).toHaveBeenCalled();
   });
 

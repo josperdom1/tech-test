@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:3000/api
+      - NODE_ENV=development
+      - PORT=3001
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+      - FAST_REFRESH=true
+    command: npm start
+    networks:
+      - dev-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  backend:
+    extends:
+      file: ./backend/docker/docker-compose.dev.yml
+      service: backend
+    networks:
+      - dev-network
+
+  postgres:
+    extends:
+      file: ./backend/docker/docker-compose.dev.yml
+      service: postgres
+    networks:
+      - dev-network
+
+networks:
+  dev-network:
+    name: duties-dev-network
+
+volumes:
+  postgres_dev_data:
+    name: duties-dev-data 
