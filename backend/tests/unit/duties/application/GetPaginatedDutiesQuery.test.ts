@@ -1,7 +1,7 @@
-import { GetPaginatedDutiesQuery } from '../../../src/duties/application/queries/GetPaginatedDutiesQuery';
-import { DutyRepository } from '../../../src/duties/domain/repositories/DutyRepository';
-import { Duty } from '../../../src/duties/domain/entities/Duty';
-import { Type } from '../../../src/types/domain/entities/Type';
+import { GetPaginatedDutiesQuery } from '../../../../src/duties/application/queries/GetPaginatedDutiesQuery';
+import { DutyRepository } from '../../../../src/duties/domain/repositories/DutyRepository';
+import { Duty } from '../../../../src/duties/domain/entities/Duty';
+import { Type } from '../../../../src/types/domain/entities/Type';
 
 describe('GetPaginatedDutiesQuery', () => {
   let getPaginatedDutiesQuery: GetPaginatedDutiesQuery;
