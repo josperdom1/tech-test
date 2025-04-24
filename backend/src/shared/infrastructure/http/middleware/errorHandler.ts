@@ -1,23 +1,33 @@
 import { Request, Response, NextFunction } from 'express';
-import { ApplicationError } from '../../../domain/errors/ApplicationError';
+  import { NotFoundError } from '../../../domain/errors/NotFoundError';
+  import { DatabaseError } from '../../../domain/errors/DatabaseError';
+  import { InvalidDutyError } from '../../../domain/errors/InvalidDutyError';
 
 export const errorHandler = (
-  err: Error,
+  error: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  console.error(err);
+  if (error instanceof NotFoundError) {
+    return res.status(404).json({
+      error: error.message
+    });
+  }
 
-  if (err instanceof ApplicationError) {
-    return res.status(err.statusCode).json({
-      message: err.message,
-      errorCode: err.errorCode
+  if (error instanceof DatabaseError) {
+    return res.status(500).json({
+      error: 'Internal server error'
+    });
+  }
+
+  if (error instanceof InvalidDutyError) {
+    return res.status(400).json({
+      error: error.message
     });
   }
 
   return res.status(500).json({
-    message: 'Internal server error',
-    errorCode: 'INTERNAL_SERVER_ERROR'
+    error: 'Internal server error'
   });
 }; 

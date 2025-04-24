@@ -7,6 +7,9 @@ export class Type {
   ) {}
 
   static create(name: string): Type {
-    return new Type(uuidv4(), name);
+    return new Type(
+      uuidv4(),
+      name
+    );
   }
 } 

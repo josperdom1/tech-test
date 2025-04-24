@@ -1,6 +1,7 @@
 import { Duty } from '../../domain/entities/Duty';
 import { Type } from '../../../types/domain/entities/Type';
 import { DutyDto, CreateDutyDto, UpdateDutyDto, PaginatedDutiesDto } from '../../infrastructure/http/dtos/DutyDto';
+import { TypeMapper } from '../../../types/application/mappers/TypeMapper';
 
 export class DutyMapper {
   static toDto(duty: Duty): DutyDto {
@@ -11,10 +12,7 @@ export class DutyMapper {
       completed: duty.completed,
       createdAt: duty.createdAt,
       updatedAt: duty.updatedAt,
-      type: {
-        id: duty.type.id,
-        name: duty.type.name
-      }
+      type: TypeMapper.toDto(duty.type)
     };
   }
 

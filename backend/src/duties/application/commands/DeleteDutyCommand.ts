@@ -1,8 +1,13 @@
 import { DutyRepository } from '../../domain/repositories/DutyRepository';
 import { NotFoundError } from '../../../shared/domain/errors/NotFoundError';
+import { DutyDeletedEvent } from '../../domain/events/DutyDeletedEvent';
+import { IDutyEventHandler } from '../event-handlers/DutyEventHandler';
 
 export class DeleteDutyCommand {
-  constructor(private readonly dutyRepository: DutyRepository) {}
+  constructor(
+    private readonly dutyRepository: DutyRepository,
+    private readonly dutyEventHandler: IDutyEventHandler
+  ) {}
 
   async execute(id: string): Promise<void> {
     const existingDuty = await this.dutyRepository.findById(id);
@@ -11,5 +16,8 @@ export class DeleteDutyCommand {
     }
 
     await this.dutyRepository.delete(id);
+    
+    // Emit event
+    await this.dutyEventHandler.handleDutyDeleted(new DutyDeletedEvent(id));
   }
 } 

@@ -1,5 +1,6 @@
 -- Drop existing tables and indexes
 DROP INDEX IF EXISTS idx_duties_type_id;
+DROP TABLE IF EXISTS duty_logs;
 DROP TABLE IF EXISTS duties;
 DROP TABLE IF EXISTS types;
 
@@ -20,8 +21,18 @@ CREATE TABLE duties (
     type_id UUID NOT NULL REFERENCES types(id)
 );
 
--- Create index for better query performance
+-- Create duty_logs table
+CREATE TABLE duty_logs (
+    id UUID PRIMARY KEY,
+    duty_id UUID NOT NULL REFERENCES duties(id),
+    action VARCHAR(50) NOT NULL,
+    details TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL
+);
+
+-- Create indexes for better query performance
 CREATE INDEX idx_duties_type_id ON duties(type_id);
+CREATE INDEX idx_duty_logs_duty_id ON duty_logs(duty_id);
 
 -- Insert initial types
 INSERT INTO types (id, name) VALUES
